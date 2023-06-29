@@ -6,23 +6,62 @@ const mongoose = require("mongoose")
 
 const app = express()
 
-mongoose.connect("mongodb://127.0.0.1:27017/wikiDB")
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.static("public"))
 
-const articleSchema = new mongoose.Schema({
+mongoose.connect("mongodb://127.0.0.1:27017/wikiDB")
+
+const articleSchema = {
     title: String,
     content: String
+}
+
+const Article = mongoose.model("Article", articleSchema)
+
+app.route("/articles")
+
+.get(function (req, res) {
+    Article.find()
+        .then((foundArticles) => {
+            res.send(foundArticles)
+        })
+        .catch((err) => {
+            if (err) {
+                res.send(err)
+            }
+        })
 })
 
-const Articles = mongoose.model("Article", articleSchema)
+.post(function (req, res) {
 
-const article = new Articles({
-    title: "API",
-    
+    const newArticle = new Article({
+        title: req.body.title,
+        content: req.body.content
+    })
+    newArticle.save()
+        .then((err) => {
+            if (!err) {
+                res.send("Successfully created a new article")
+            }
+            else{
+                res.send(err)
+            }
+        })
 })
+
+.delete(function (req, res) {
+    Article.deleteMany()
+        .then((err) => {
+            if (!err) {
+                res.send("Successfully deleted the articles")
+            } else {
+                res.send(err)
+            }
+        })
+})
+
 
 app.listen("3000" || process.env.PORT, function(){
     console.log("Server started on port 3000")
