@@ -20,6 +20,8 @@ const articleSchema = {
 
 const Article = mongoose.model("Article", articleSchema)
 
+
+/// Targets all articles /////
 app.route("/articles")
 
 .get(function (req, res) {
@@ -62,6 +64,24 @@ app.route("/articles")
         })
 })
 
+
+///Targets specific routes
+app.route("/articles/:articleTitle")
+
+.get(function(req, res){
+   Article.findOne({title: req.params.articleTitle})
+   .then((foundArticle)=>{
+    if (foundArticle){
+        res.send(foundArticle)
+    }else{
+        res.send("No matching article found")
+    }
+   })
+})
+
+.post(function (req, res) {
+
+})
 
 app.listen("3000" || process.env.PORT, function(){
     console.log("Server started on port 3000")
