@@ -79,8 +79,17 @@ app.route("/articles/:articleTitle")
    })
 })
 
-.post(function (req, res) {
+.put(function (req, res) {
+   Article.updateOne({title: req.params.articleTitle},
+    {title: req.body.title,
+    content: req.body.content},
+   )
 
+    .then((err)=>{
+        if(!err){
+            res.send("Successful!")
+        }
+    })
 })
 
 app.listen("3000" || process.env.PORT, function(){
