@@ -83,7 +83,7 @@ app.route("/articles/:articleTitle")
    Article.updateOne({title: req.params.articleTitle},
     {title: req.body.title,
     content: req.body.content},
-   )
+    {overwrite: true})
 
     .then((err)=>{
         if(!err){
